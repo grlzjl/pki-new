@@ -23,13 +23,13 @@
     <link rel="stylesheet" type="text/css" href="<%=path %>/static/h-ui.admin/skin/default/skin.css" id="skin"/>
     <link rel="stylesheet" type="text/css" href="<%=path %>/static/h-ui.admin/css/style.css"/>
     <![endif]-->
-    <title>基于pki的校园登录系统</title>
+    <title>产品证书管理</title>
 </head>
 <body>
 <header class="navbar-wrapper">
     <div class="navbar navbar-fixed-top">
         <div class="container-fluid cl"><a class="logo navbar-logo f-l mr-10 hidden-xs"
-                                           href="<%=path %>/aboutHui.shtml">基于pki的校园登录系统</a> <a
+                                           href="<%=path %>/aboutHui.shtml">产品证书管理</a> <a
                 class="logo navbar-logo-m f-l mr-10 visible-xs" href="<%=path %>/aboutHui.shtml">关于</a>
             <span class="logo navbar-slogan f-l mr-10 hidden-xs"></span>
             <a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
@@ -93,7 +93,7 @@
             <dt><i class="Hui-iconfont">&#xe613;</i> 个人管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="<%=path%>/data/sensors.do" data-title="传感器列表" href="javascript:void(0)">个人信息管理</a>
+                    <li><a data-href="<%=path%>/data/sensors.do" data-title=个人信息" href="javascript:void(0)">个人信息管理</a>
                     </li>
                 </ul>
             </dd>
