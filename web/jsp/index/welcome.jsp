@@ -24,9 +24,9 @@
 </head>
 <body>
 <div class="page-container">
-    <p class="f-30 text-success">欢迎使用-PKI的校园登录系统</p>
+    <p class="f-30 text-success">产品证书管理</p>
     <p>登录次数：18 </p>
-    <p>上次登录IP：222.35.131.79.1 上次登录时间：2014-6-14 11:19:55</p>
+    <p>上次登录IP：222.35.131.79.1 上次登录时间：2020-5-10 11:19:55</p>
     <table class="table table-border table-bordered table-bg">
         <thead>
         <tr>
