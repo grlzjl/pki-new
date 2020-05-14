@@ -4,6 +4,7 @@ import com.pki.entity.Cabook;
 import com.pki.entity.RestfulVo;
 import com.pki.entity.User;
 import com.pki.enums.CAState;
+import com.pki.enums.UserType;
 import com.pki.service.Impl.CABookService;
 import com.pki.service.Impl.UserService;
 import com.pki.utils.BookUtils;
@@ -62,12 +63,12 @@ public class BookSController extends BaseController {
         } else {
             Date d = new Date();
             SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-            String url = f.format(d);
+            String url = f.format(d) + new Date().getTime();
             String bookPath = PropertiesUtils.getBookPath();
             String caUrl = bookPath + user.getUName() + url + ".keystore";
             cabook.setCaUrl(caUrl);
             cabook.setUId(user.getUId());
-            cabook.setCaStart(CAState.PASS.getDiscribe());
+            cabook.setCaStart(CAState.UNDER.getStatCode());
             cABookService.Save(cabook);
             BookUtils.genkey(cabook);
             return "success";
@@ -77,15 +78,23 @@ public class BookSController extends BaseController {
 
     //普通用户按状态查询
     @RequestMapping("select")
-    public String select(HttpServletRequest request, String type) {
+    public String select(HttpServletRequest request, Integer type) {
         User user = getconcurrentUser(request);
 
         List<Cabook> list = cABookService.getBookByUId(user.getUId(), type);
         request.setAttribute("books", list);
-        if (Integer.parseInt(type) != CAState.PASS.getStatCode()) {
+        if (type != CAState.PASS.getStatCode()) {
             return "books/applys";
         }
         return "books/books";
+    }
+
+
+    @RequestMapping("getBook")
+    @ResponseBody
+    public Cabook getBook(HttpServletRequest request, Integer id) {
+        Cabook book = cABookService.getCaBookById(id);
+        return book;
     }
 
 
@@ -96,7 +105,7 @@ public class BookSController extends BaseController {
         List<Cabook> list = new ArrayList<>();
         if (null == user) {
         } else {
-            list = cABookService.getBookByStart(type + "");
+            list = cABookService.getBookByStart(type);
         }
         request.setAttribute("books", list);
         if (type != CAState.PASS.getStatCode()) {
@@ -131,7 +140,6 @@ public class BookSController extends BaseController {
         }
     }
 
-    private Integer caBookId;
 
     //管理员签发证书
     @RequestMapping("review")
@@ -142,26 +150,37 @@ public class BookSController extends BaseController {
 
         if (null == user) {
             restfulVo.setCode(500);
-            return restfulVo;
-        } else {
-
-            Cabook cabook = cABookService.getCaBookById(caBookId);
-            if (CAState.valueOf(type) == CAState.PASS) {
-                System.out.println("------------>>" + cabook.getCaCn());
-                BookUtils.export(cabook, user);
-            } else {
-                cabook.setCaStart(type + "");
-            }
-
-            cABookService.updata(cabook);
-            restfulVo.setCode(200);
+            restfulVo.setSuccessful(false);
+            restfulVo.setMessage("操作失败");
             return restfulVo;
         }
+
+        if (user.getUType() != UserType.ADMIN.getStatCode()) {
+            restfulVo.setCode(500);
+            restfulVo.setSuccessful(false);
+            restfulVo.setMessage("无权限！");
+            return restfulVo;
+        }
+        Cabook cabook = cABookService.getCaBookById(caBookId);
+        Integer bookUId = cabook.getUId();
+        User bookUser = userService.getUserById(bookUId);
+        if (CAState.valueOf(type) == CAState.PASS) {
+            BookUtils.export(cabook, bookUser);
+        } else {
+            cabook.setCaStart(type);
+        }
+        cABookService.update(cabook);
+        restfulVo.setCode(200);
+        restfulVo.setSuccessful(true);
+        restfulVo.setMessage("操作成功");
+        return restfulVo;
+
     }
 
     //管理员删除证书
     @RequestMapping("deleteca")
-    public String deleteca() {
+    @ResponseBody
+    public String deleteca(HttpServletRequest request, Integer caBookId) {
         Cabook cabook = cABookService.getCaBookById(caBookId);
         java.io.File file = new java.io.File(cabook.getCaUrl());
         cABookService.delete(cabook);
